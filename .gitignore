@@ -6,3 +6,7 @@ bin
 *.rpm
 test
 .DS_Store
+
+.aider*
+logs/
+vendor/
