@@ -12,10 +12,6 @@ import (
 	"github.com/cloudflare/cfssl/transport/example/exlib"
 )
 
-// maclient is a mutual-authentication client, meant to demonstrate
-// using the client-side mutual authentication side of the transport
-// package.
-
 var messages = []string{"hello world", "hello", "world"}
 
 func main() {

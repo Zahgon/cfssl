@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -13,43 +11,24 @@ import (
 
 var wl = whitelist.NewBasic()
 
-func addIP(w http.ResponseWriter, r *http.Request) {
-	addr := r.FormValue("ip")
+func addIP(w http.ResponseWriter, r *http.Request) { _ = "STUB: not implemented"; return }
 
-	ip := net.ParseIP(addr)
-	wl.Add(ip)
-	log.Printf("request to add %s to the whitelist", addr)
-	w.Write([]byte(fmt.Sprintf("Added %s to whitelist.\n", addr)))
-}
+func delIP(w http.ResponseWriter, r *http.Request) { _ = "STUB: not implemented"; return }
 
-func delIP(w http.ResponseWriter, r *http.Request) {
-	addr := r.FormValue("ip")
-
-	ip := net.ParseIP(addr)
-	wl.Remove(ip)
-	log.Printf("request to remove %s from the whitelist", addr)
-	w.Write([]byte(fmt.Sprintf("Removed %s from whitelist.\n", ip)))
-}
-
-func dumpWhitelist(w http.ResponseWriter, r *http.Request) {
-	out, err := json.Marshal(wl)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		w.Write(out)
-	}
-}
+func dumpWhitelist(w http.ResponseWriter, r *http.Request) { _ = "STUB: not implemented"; return }
 
 type handler struct {
 	h func(http.ResponseWriter, *http.Request)
 }
 
 func newHandler(h func(w http.ResponseWriter, r *http.Request)) http.Handler {
-	return &handler{h: h}
+	_ = "STUB: not implemented"
+	return *new(http.Handler)
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h.h(w, r)
+	_ = "STUB: not implemented"
+	return
 }
 
 func main() {

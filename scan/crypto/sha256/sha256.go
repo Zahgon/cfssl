@@ -1,9 +1,3 @@
-// Copyright 2009 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// Package sha256 implements the SHA224 and SHA256 hash algorithms as defined
-// in FIPS 180-4.
 package sha256
 
 import (
@@ -16,13 +10,10 @@ func init() {
 	crypto.RegisterHash(crypto.SHA256, New)
 }
 
-// The size of a SHA256 checksum in bytes.
 const Size = 32
 
-// The size of a SHA224 checksum in bytes.
 const Size224 = 28
 
-// The blocksize of SHA256 and SHA224 in bytes.
 const BlockSize = 64
 
 const (
@@ -45,149 +36,30 @@ const (
 	init7_224 = 0xBEFA4FA4
 )
 
-// digest represents the partial evaluation of a checksum.
 type digest struct {
 	h     [8]uint32
 	x     [chunk]byte
 	nx    int
 	len   uint64
-	is224 bool // mark if this digest is SHA-224
+	is224 bool
 }
 
-func (d *digest) Reset() {
-	if !d.is224 {
-		d.h[0] = init0
-		d.h[1] = init1
-		d.h[2] = init2
-		d.h[3] = init3
-		d.h[4] = init4
-		d.h[5] = init5
-		d.h[6] = init6
-		d.h[7] = init7
-	} else {
-		d.h[0] = init0_224
-		d.h[1] = init1_224
-		d.h[2] = init2_224
-		d.h[3] = init3_224
-		d.h[4] = init4_224
-		d.h[5] = init5_224
-		d.h[6] = init6_224
-		d.h[7] = init7_224
-	}
-	d.nx = 0
-	d.len = 0
-}
+func (d *digest) Reset() { _ = "STUB: not implemented"; return }
 
-// New returns a new hash.Hash computing the SHA256 checksum.
-func New() hash.Hash {
-	d := new(digest)
-	d.Reset()
-	return d
-}
+func New() hash.Hash { _ = "STUB: not implemented"; return *new(hash.Hash) }
 
-// New224 returns a new hash.Hash computing the SHA224 checksum.
-func New224() hash.Hash {
-	d := new(digest)
-	d.is224 = true
-	d.Reset()
-	return d
-}
+func New224() hash.Hash { _ = "STUB: not implemented"; return *new(hash.Hash) }
 
-func (d *digest) Size() int {
-	if !d.is224 {
-		return Size
-	}
-	return Size224
-}
+func (d *digest) Size() int { _ = "STUB: not implemented"; return 0 }
 
-func (d *digest) BlockSize() int { return BlockSize }
+func (d *digest) BlockSize() int { _ = "STUB: not implemented"; return 0 }
 
-func (d *digest) Write(p []byte) (nn int, err error) {
-	nn = len(p)
-	d.len += uint64(nn)
-	if d.nx > 0 {
-		n := copy(d.x[d.nx:], p)
-		d.nx += n
-		if d.nx == chunk {
-			block(d, d.x[:])
-			d.nx = 0
-		}
-		p = p[n:]
-	}
-	if len(p) >= chunk {
-		n := len(p) &^ (chunk - 1)
-		block(d, p[:n])
-		p = p[n:]
-	}
-	if len(p) > 0 {
-		d.nx = copy(d.x[:], p)
-	}
-	return
-}
+func (d *digest) Write(p []byte) (nn int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (d0 *digest) Sum(in []byte) []byte {
-	// Make a copy of d0 so that caller can keep writing and summing.
-	d := *d0
-	hash := d.checkSum()
-	if d.is224 {
-		return append(in, hash[:Size224]...)
-	}
-	return append(in, hash[:]...)
-}
+func (d0 *digest) Sum(in []byte) []byte { _ = "STUB: not implemented"; return nil }
 
-func (d *digest) checkSum() [Size]byte {
-	len := d.len
-	// Padding.  Add a 1 bit and 0 bits until 56 bytes mod 64.
-	var tmp [64]byte
-	tmp[0] = 0x80
-	if len%64 < 56 {
-		d.Write(tmp[0 : 56-len%64])
-	} else {
-		d.Write(tmp[0 : 64+56-len%64])
-	}
+func (d *digest) checkSum() [Size]byte { _ = "STUB: not implemented"; return [Size]byte{} }
 
-	// Length in bits.
-	len <<= 3
-	for i := uint(0); i < 8; i++ {
-		tmp[i] = byte(len >> (56 - 8*i))
-	}
-	d.Write(tmp[0:8])
+func Sum256(data []byte) [Size]byte { _ = "STUB: not implemented"; return [Size]byte{} }
 
-	if d.nx != 0 {
-		panic("d.nx != 0")
-	}
-
-	h := d.h[:]
-	if d.is224 {
-		h = d.h[:7]
-	}
-
-	var digest [Size]byte
-	for i, s := range h {
-		digest[i*4] = byte(s >> 24)
-		digest[i*4+1] = byte(s >> 16)
-		digest[i*4+2] = byte(s >> 8)
-		digest[i*4+3] = byte(s)
-	}
-
-	return digest
-}
-
-// Sum256 returns the SHA256 checksum of the data.
-func Sum256(data []byte) [Size]byte {
-	var d digest
-	d.Reset()
-	d.Write(data)
-	return d.checkSum()
-}
-
-// Sum224 returns the SHA224 checksum of the data.
-func Sum224(data []byte) (sum224 [Size224]byte) {
-	var d digest
-	d.is224 = true
-	d.Reset()
-	d.Write(data)
-	sum := d.checkSum()
-	copy(sum224[:], sum[:Size224])
-	return
-}
+func Sum224(data []byte) (sum224 [Size224]byte) { _ = "STUB: not implemented"; return [Size224]byte{} }

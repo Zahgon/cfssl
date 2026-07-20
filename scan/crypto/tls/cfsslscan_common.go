@@ -1,9 +1,5 @@
 package tls
 
-import (
-	"fmt"
-)
-
 type hashAlgID uint8
 
 const (
@@ -16,30 +12,10 @@ const (
 	HashSHA512
 )
 
-func (h hashAlgID) String() string {
-	switch h {
-	case HashNone:
-		return "None"
-	case HashMD5:
-		return "MD5"
-	case HashSHA1:
-		return "SHA1"
-	case HashSHA224:
-		return "SHA224"
-	case HashSHA256:
-		return "SHA256"
-	case HashSHA384:
-		return "SHA384"
-	case HashSHA512:
-		return "SHA512"
-	default:
-		return "Unknown"
-	}
-}
+func (h hashAlgID) String() string { _ = "STUB: not implemented"; return "" }
 
 type sigAlgID uint8
 
-// Signature algorithms for TLS 1.2 (See RFC 5246, section A.4.1)
 const (
 	SigAnon sigAlgID = iota
 	SigRSA
@@ -47,46 +23,27 @@ const (
 	SigECDSA
 )
 
-func (sig sigAlgID) String() string {
-	switch sig {
-	case SigAnon:
-		return "Anon"
-	case SigRSA:
-		return "RSA"
-	case SigDSA:
-		return "DSA"
-	case SigECDSA:
-		return "ECDSA"
-	default:
-		return "Unknown"
-	}
-}
+func (sig sigAlgID) String() string { _ = "STUB: not implemented"; return "" }
 
-// SignatureAndHash mirrors the TLS 1.2, SignatureAndHashAlgorithm struct. See
-// RFC 5246, section A.4.1.
 type SignatureAndHash struct {
 	h hashAlgID
 	s sigAlgID
 }
 
-func (sigAlg SignatureAndHash) String() string {
-	return fmt.Sprintf("{%s,%s}", sigAlg.s, sigAlg.h)
-}
+func (sigAlg SignatureAndHash) String() string { _ = "STUB: not implemented"; return "" }
 
 func (sigAlg SignatureAndHash) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf(`{"signature":"%s","hash":"%s"}`, sigAlg.s, sigAlg.h)), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (sigAlg SignatureAndHash) internal() signatureAndHash {
-	return signatureAndHash{uint8(sigAlg.h), uint8(sigAlg.s)}
+	_ = "STUB: not implemented"
+	return *new(signatureAndHash)
 }
 
-// defaultSignatureAndHashAlgorithms contains the default signature and hash
-// algorithm paris supported by `crypto/tls`
 var defaultSignatureAndHashAlgorithms []signatureAndHash
 
-// AllSignatureAndHashAlgorithms contains all possible signature and
-// hash algorithm pairs that the can be advertised in a TLS 1.2 ClientHello.
 var AllSignatureAndHashAlgorithms []SignatureAndHash
 
 func init() {
@@ -97,7 +54,6 @@ func init() {
 	}
 }
 
-// TLSVersions is a list of the current SSL/TLS Versions implemented by Go
 var Versions = map[uint16]string{
 	VersionSSL30: "SSL 3.0",
 	VersionTLS10: "TLS 1.0",
@@ -105,25 +61,15 @@ var Versions = map[uint16]string{
 	VersionTLS12: "TLS 1.2",
 }
 
-// CipherSuite describes an individual cipher suite, with long and short names
-// and security properties.
 type CipherSuite struct {
 	Name, ShortName string
-	// ForwardSecret cipher suites negotiate ephemeral keys, allowing forward secrecy.
+
 	ForwardSecret bool
 	EllipticCurve bool
 }
 
-// Returns the (short) name of the cipher suite.
-func (c CipherSuite) String() string {
-	if c.ShortName != "" {
-		return c.ShortName
-	}
-	return c.Name
-}
+func (c CipherSuite) String() string { _ = "STUB: not implemented"; return "" }
 
-// CipherSuites contains all values in the TLS Cipher Suite Registry
-// https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml
 var CipherSuites = map[uint16]CipherSuite{
 	0x0000: {Name: "TLS_NULL_WITH_NULL_NULL"},
 	0x0001: {Name: "TLS_RSA_WITH_NULL_MD5"},
@@ -443,9 +389,7 @@ var CipherSuites = map[uint16]CipherSuite{
 	0xC0AD: {Name: "TLS_ECDHE_ECDSA_WITH_AES_256_CCM", ForwardSecret: true, EllipticCurve: true},
 	0xC0AE: {Name: "TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", ForwardSecret: true, EllipticCurve: true},
 	0xC0AF: {Name: "TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8", ForwardSecret: true, EllipticCurve: true},
-	// Non-IANA standardized cipher suites:
-	// ChaCha20, Poly1305 cipher suites are defined in
-	// https://tools.ietf.org/html/draft-agl-tls-chacha20poly1305-04
+
 	0xCC13: {Name: "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256", ForwardSecret: true, EllipticCurve: true},
 	0xCC14: {Name: "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256", ForwardSecret: true, EllipticCurve: true},
 	0xCC15: {Name: "TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256", ForwardSecret: true, EllipticCurve: true},

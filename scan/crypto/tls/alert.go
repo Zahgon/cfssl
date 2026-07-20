@@ -1,15 +1,8 @@
-// Copyright 2009 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package tls
-
-import "strconv"
 
 type alert uint8
 
 const (
-	// alert level
 	alertLevelWarning = 1
 	alertLevelError   = 2
 )
@@ -66,14 +59,6 @@ var alertText = map[alert]string{
 	alertNoRenegotiation:        "no renegotiation",
 }
 
-func (e alert) String() string {
-	s, ok := alertText[e]
-	if ok {
-		return s
-	}
-	return "alert(" + strconv.Itoa(int(e)) + ")"
-}
+func (e alert) String() string { _ = "STUB: not implemented"; return "" }
 
-func (e alert) Error() string {
-	return e.String()
-}
+func (e alert) Error() string { _ = "STUB: not implemented"; return "" }

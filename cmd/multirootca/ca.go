@@ -1,45 +1,25 @@
 package main
 
 import (
-	"crypto/ecdsa"
-	"crypto/ed25519"
-	"crypto/rsa"
-	"errors"
 	"flag"
 	"net"
 	"net/http"
 
 	"github.com/cloudflare/cfssl/api/info"
-	"github.com/cloudflare/cfssl/certdb/sql"
 	"github.com/cloudflare/cfssl/log"
 	"github.com/cloudflare/cfssl/multiroot/config"
 	"github.com/cloudflare/cfssl/signer"
-	"github.com/cloudflare/cfssl/signer/local"
 	"github.com/cloudflare/cfssl/whitelist"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	_ "github.com/go-sql-driver/mysql" // import to support MySQL
-	_ "github.com/lib/pq"              // import to support Postgres
-	_ "github.com/mattn/go-sqlite3"    // import to support SQLite
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func parseSigner(root *config.Root) (signer.Signer, error) {
-	privateKey := root.PrivateKey
-	switch priv := privateKey.(type) {
-	case *rsa.PrivateKey, *ecdsa.PrivateKey, ed25519.PrivateKey:
-		s, err := local.NewSigner(priv, root.Certificate, signer.DefaultSigAlgo(priv), nil)
-		if err != nil {
-			return nil, err
-		}
-		s.SetPolicy(root.Config)
-		if root.DB != nil {
-			dbAccessor := sql.NewAccessor(root.DB)
-			s.SetDBAccessor(dbAccessor)
-		}
-		return s, nil
-	default:
-		return nil, errors.New("unsupported private key type")
-	}
+	_ = "STUB: not implemented"
+	return *new(signer.Signer), nil
 }
 
 var (

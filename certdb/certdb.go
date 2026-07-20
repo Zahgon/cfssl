@@ -2,14 +2,11 @@ package certdb
 
 import (
 	"database/sql"
-	"encoding/json"
 	"time"
 
 	"github.com/jmoiron/sqlx/types"
 )
 
-// CertificateRecord encodes a certificate and its metadata
-// that will be recorded in a database.
 type CertificateRecord struct {
 	Serial    string    `db:"serial_number"`
 	AKI       string    `db:"authority_key_identifier"`
@@ -19,7 +16,7 @@ type CertificateRecord struct {
 	Expiry    time.Time `db:"expiry"`
 	RevokedAt time.Time `db:"revoked_at"`
 	PEM       string    `db:"pem"`
-	// the following fields will be empty for data inserted before migrate 002 has been run.
+
 	IssuedAt     *time.Time     `db:"issued_at"`
 	NotBefore    *time.Time     `db:"not_before"`
 	MetadataJSON types.JSONText `db:"metadata"`
@@ -27,42 +24,20 @@ type CertificateRecord struct {
 	CommonName   sql.NullString `db:"common_name"`
 }
 
-// SetMetadata sets the metadata json
 func (c *CertificateRecord) SetMetadata(meta map[string]interface{}) error {
-	marshaled, err := json.Marshal(meta)
-	if err != nil {
-		return err
-	}
-	c.MetadataJSON = types.JSONText(marshaled)
+	_ = "STUB: not implemented"
 	return nil
 }
 
-// GetMetadata returns the json metadata
 func (c *CertificateRecord) GetMetadata() (map[string]interface{}, error) {
-	var meta map[string]interface{}
-	err := c.MetadataJSON.Unmarshal(&meta)
-	return meta, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// SetSANs sets the list of sans
-func (c *CertificateRecord) SetSANs(meta []string) error {
-	marshaled, err := json.Marshal(meta)
-	if err != nil {
-		return err
-	}
-	c.SANsJSON = types.JSONText(marshaled)
-	return nil
-}
+func (c *CertificateRecord) SetSANs(meta []string) error { _ = "STUB: not implemented"; return nil }
 
-// GetSANs returns the json SANs
-func (c *CertificateRecord) GetSANs() ([]string, error) {
-	var sans []string
-	err := c.SANsJSON.Unmarshal(&sans)
-	return sans, err
-}
+func (c *CertificateRecord) GetSANs() ([]string, error) { _ = "STUB: not implemented"; return nil, nil }
 
-// OCSPRecord encodes a OCSP response body and its metadata
-// that will be recorded in a database.
 type OCSPRecord struct {
 	Serial string    `db:"serial_number"`
 	AKI    string    `db:"authority_key_identifier"`
@@ -70,7 +45,6 @@ type OCSPRecord struct {
 	Expiry time.Time `db:"expiry"`
 }
 
-// Accessor abstracts the CRUD of certdb objects from a DB.
 type Accessor interface {
 	InsertCertificate(cr CertificateRecord) error
 	GetCertificate(serial, aki string) ([]CertificateRecord, error)

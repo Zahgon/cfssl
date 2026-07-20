@@ -245,7 +245,7 @@ func validateUser(name, password string, admin bool) error {
 	return nil
 }
 
-//Username must start with an alphanumeric character and can include "-" and "_" after the first
+// Username must start with an alphanumeric character and can include "-" and "_" after the first
 var validName = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9\_\-]*$`).MatchString
 
 // validateName checks that the username and password pass a validation test.

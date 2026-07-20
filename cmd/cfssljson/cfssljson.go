@@ -1,5 +1,3 @@
-// cfssljson splits out JSON with cert, csr, and key fields to separate
-// files.
 package main
 
 import (
@@ -7,34 +5,20 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/cloudflare/cfssl/cli/version"
 )
 
-func readFile(filespec string) ([]byte, error) {
-	if filespec == "-" {
-		return io.ReadAll(os.Stdin)
-	}
-	return os.ReadFile(filespec)
-}
+func readFile(filespec string) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func writeFile(filespec, contents string, perms os.FileMode) {
-	err := os.WriteFile(filespec, []byte(contents), perms)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		os.Exit(1)
-	}
-}
+func writeFile(filespec, contents string, perms os.FileMode) { _ = "STUB: not implemented"; return }
 
-// ResponseMessage represents the format of a CFSSL output for an error or message
 type ResponseMessage struct {
 	Code    int    `json:"int"`
 	Message string `json:"message"`
 }
 
-// Response represents the format of a CFSSL output
 type Response struct {
 	Success  bool                   `json:"success"`
 	Result   map[string]interface{} `json:"result"`
@@ -157,9 +141,6 @@ func main() {
 	if result, ok := input["result"].(map[string]interface{}); ok {
 		if bundle, ok := result["bundle"].(map[string]interface{}); ok {
 
-			// if we've gotten this deep then we're trying to parse out
-			// a bundle, now we fail if we can't find the keys we need.
-
 			certificateBundle, ok := bundle["bundle"].(string)
 			if !ok {
 				fmt.Fprintf(os.Stderr, "inner bundle parsing failed!\n")
@@ -184,7 +165,7 @@ func main() {
 	}
 
 	if contents, ok := input["ocspResponse"]; ok {
-		// ocspResponse is base64 encoded
+
 		resp, err := base64.StdEncoding.DecodeString(contents.(string))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to parse ocspResponse: %v\n", err)

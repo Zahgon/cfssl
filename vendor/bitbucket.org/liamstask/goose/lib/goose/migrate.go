@@ -166,7 +166,9 @@ func (ms migrationSorter) Sort(direction bool) {
 }
 
 // look for migration scripts with names in the form:
-//  XXX_descriptivename.ext
+//
+//	XXX_descriptivename.ext
+//
 // where XXX specifies the version number
 // and ext specifies the type of migration
 func NumericComponent(name string) (int64, error) {

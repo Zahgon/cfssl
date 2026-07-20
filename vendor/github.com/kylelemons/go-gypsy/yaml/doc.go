@@ -21,9 +21,9 @@
 //
 // Gypsy understands the following to be a list:
 //
-//     - one
-//     - two
-//     - three
+//   - one
+//   - two
+//   - three
 //
 // This is parsed as a `yaml.List`, and can be retrieved from the
 // `yaml.Node.List()` method.  In this case, each element of the `yaml.List` would
@@ -32,9 +32,9 @@
 //
 // Gypsy understands the following to be a mapping:
 //
-//     key:     value
-//     foo:     bar
-//     running: away
+//	key:     value
+//	foo:     bar
+//	running: away
 //
 // A mapping is an unordered list of `key:value` pairs.  All whitespace after the
 // colon is stripped from the value and is used for alignment purposes during
@@ -47,43 +47,43 @@
 //
 // A map inside of a list:
 //
-//     - name: John Smith
-//       age:  42
-//     - name: Jane Smith
-//       age:  45
+//   - name: John Smith
+//     age:  42
+//   - name: Jane Smith
+//     age:  45
 //
 // A list inside of a map:
 //
-//     schools:
-//       - Meadow Glen
-//       - Forest Creek
-//       - Shady Grove
-//     libraries:
-//       - Joseph Hollingsworth Memorial
-//       - Andrew Keriman Memorial
+//	schools:
+//	  - Meadow Glen
+//	  - Forest Creek
+//	  - Shady Grove
+//	libraries:
+//	  - Joseph Hollingsworth Memorial
+//	  - Andrew Keriman Memorial
 //
 // A list of lists:
 //
-//     - - one
-//       - two
-//       - three
-//     - - un
-//       - deux
-//       - trois
-//     - - ichi
-//       - ni
-//       - san
+//   - - one
+//   - two
+//   - three
+//   - - un
+//   - deux
+//   - trois
+//   - - ichi
+//   - ni
+//   - san
 //
 // A map of maps:
 //
-//     google:
-//       company: Google, Inc.
-//       ticker:  GOOG
-//       url:     http://google.com/
-//     yahoo:
-//       company: Yahoo, Inc.
-//       ticker:  YHOO
-//       url:     http://yahoo.com/
+//	google:
+//	  company: Google, Inc.
+//	  ticker:  GOOG
+//	  url:     http://google.com/
+//	yahoo:
+//	  company: Yahoo, Inc.
+//	  ticker:  YHOO
+//	  url:     http://yahoo.com/
 //
 // In the case of a map of maps, all sub-keys must be on subsequent lines and
 // indented equally.  It is allowable for the first key/value to be on the same
@@ -98,41 +98,41 @@
 // the verbatim (foo) case, only the indent at the level of the first line is
 // stripped.  The example:
 //
-//     foo: |
-//       lorem ipsum dolor
-//       sit amet
-//     bar: >
-//       lorem ipsum
+//	foo: |
+//	  lorem ipsum dolor
+//	  sit amet
+//	bar: >
+//	  lorem ipsum
 //
-//         dolor
+//	    dolor
 //
-//       sit amet
-//     baz:
-//       lorem ipsum
-//        dolor sit amet
+//	  sit amet
+//	baz:
+//	  lorem ipsum
+//	   dolor sit amet
 //
 // The YAML subset understood by Gypsy can be expressed (loosely) in the following
 // grammar (not including comments):
 //
-//               OBJECT = MAPPING | SEQUENCE | SCALAR .
-//         SHORT-OBJECT = SHORT-MAPPING | SHORT-SEQUENCE | SHORT-SCALAR .
-//                  EOL = '\n'
+//	        OBJECT = MAPPING | SEQUENCE | SCALAR .
+//	  SHORT-OBJECT = SHORT-MAPPING | SHORT-SEQUENCE | SHORT-SCALAR .
+//	           EOL = '\n'
 //
-//              MAPPING = { LONG-MAPPING | SHORT-MAPPING } .
-//             SEQUENCE = { LONG-SEQUENCE | SHORT-SEQUENCE } .
-//               SCALAR = { LONG-SCALAR | SHORT-SCALAR } .
+//	       MAPPING = { LONG-MAPPING | SHORT-MAPPING } .
+//	      SEQUENCE = { LONG-SEQUENCE | SHORT-SEQUENCE } .
+//	        SCALAR = { LONG-SCALAR | SHORT-SCALAR } .
 //
-//         LONG-MAPPING = { INDENT KEY ':' OBJECT EOL } .
-//        SHORT-MAPPING = '{' KEY ':' SHORT-OBJECT { ',' KEY ':' SHORT-OBJECT } '}' EOL .
+//	  LONG-MAPPING = { INDENT KEY ':' OBJECT EOL } .
+//	 SHORT-MAPPING = '{' KEY ':' SHORT-OBJECT { ',' KEY ':' SHORT-OBJECT } '}' EOL .
 //
-//        LONG-SEQUENCE = { INDENT '-' OBJECT EOL } EOL .
-//       SHORT-SEQUENCE = '[' SHORT-OBJECT { ',' SHORT-OBJECT } ']' EOL .
+//	 LONG-SEQUENCE = { INDENT '-' OBJECT EOL } EOL .
+//	SHORT-SEQUENCE = '[' SHORT-OBJECT { ',' SHORT-OBJECT } ']' EOL .
 //
-//          LONG-SCALAR = ( '|' | '>' | ) EOL { INDENT SHORT-SCALAR EOL }
-//         SHORT-SCALAR = { alpha | digit | punct | ' ' | '\t' } .
+//	   LONG-SCALAR = ( '|' | '>' | ) EOL { INDENT SHORT-SCALAR EOL }
+//	  SHORT-SCALAR = { alpha | digit | punct | ' ' | '\t' } .
 //
-//                  KEY = { alpha | digit }
-//               INDENT = { ' ' }
+//	           KEY = { alpha | digit }
+//	        INDENT = { ' ' }
 //
 // Any line where the first non-space character is a sharp sign (#) is a comment.
 // It will be ignored.

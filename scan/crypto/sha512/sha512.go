@@ -1,9 +1,3 @@
-// Copyright 2009 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// Package sha512 implements the SHA-384, SHA-512, SHA-512/224, and SHA-512/256
-// hash algorithms as defined in FIPS 180-4.
 package sha512
 
 import (
@@ -19,20 +13,14 @@ func init() {
 }
 
 const (
-	// Size is the size, in bytes, of a SHA-512 checksum.
 	Size = 64
 
-	// Size224 is the size, in bytes, of a SHA-512/224 checksum.
 	Size224 = 28
 
-	// Size256 is the size, in bytes, of a SHA-512/256 checksum.
 	Size256 = 32
 
-	// Size384 is the size, in bytes, of a SHA-384 checksum.
 	Size384 = 48
 
-	// BlockSize is the block size, in bytes, of the SHA-512/224,
-	// SHA-512/256, SHA-384 and SHA-512 hash functions.
 	BlockSize = 128
 )
 
@@ -72,7 +60,6 @@ const (
 	init7_384 = 0x47b5481dbefa4fa4
 )
 
-// digest represents the partial evaluation of a checksum.
 type digest struct {
 	h        [8]uint64
 	x        [chunk]byte
@@ -81,208 +68,36 @@ type digest struct {
 	function crypto.Hash
 }
 
-func (d *digest) Reset() {
-	switch d.function {
-	case crypto.SHA384:
-		d.h[0] = init0_384
-		d.h[1] = init1_384
-		d.h[2] = init2_384
-		d.h[3] = init3_384
-		d.h[4] = init4_384
-		d.h[5] = init5_384
-		d.h[6] = init6_384
-		d.h[7] = init7_384
-	case crypto.SHA512_224:
-		d.h[0] = init0_224
-		d.h[1] = init1_224
-		d.h[2] = init2_224
-		d.h[3] = init3_224
-		d.h[4] = init4_224
-		d.h[5] = init5_224
-		d.h[6] = init6_224
-		d.h[7] = init7_224
-	case crypto.SHA512_256:
-		d.h[0] = init0_256
-		d.h[1] = init1_256
-		d.h[2] = init2_256
-		d.h[3] = init3_256
-		d.h[4] = init4_256
-		d.h[5] = init5_256
-		d.h[6] = init6_256
-		d.h[7] = init7_256
-	default:
-		d.h[0] = init0
-		d.h[1] = init1
-		d.h[2] = init2
-		d.h[3] = init3
-		d.h[4] = init4
-		d.h[5] = init5
-		d.h[6] = init6
-		d.h[7] = init7
-	}
-	d.nx = 0
-	d.len = 0
-}
+func (d *digest) Reset() { _ = "STUB: not implemented"; return }
 
-// New returns a new hash.Hash computing the SHA-512 checksum.
-func New() hash.Hash {
-	d := &digest{function: crypto.SHA512}
-	d.Reset()
-	return d
-}
+func New() hash.Hash { _ = "STUB: not implemented"; return *new(hash.Hash) }
 
-// New512_224 returns a new hash.Hash computing the SHA-512/224 checksum.
-func New512_224() hash.Hash {
-	d := &digest{function: crypto.SHA512_224}
-	d.Reset()
-	return d
-}
+func New512_224() hash.Hash { _ = "STUB: not implemented"; return *new(hash.Hash) }
 
-// New512_256 returns a new hash.Hash computing the SHA-512/256 checksum.
-func New512_256() hash.Hash {
-	d := &digest{function: crypto.SHA512_256}
-	d.Reset()
-	return d
-}
+func New512_256() hash.Hash { _ = "STUB: not implemented"; return *new(hash.Hash) }
 
-// New384 returns a new hash.Hash computing the SHA-384 checksum.
-func New384() hash.Hash {
-	d := &digest{function: crypto.SHA384}
-	d.Reset()
-	return d
-}
+func New384() hash.Hash { _ = "STUB: not implemented"; return *new(hash.Hash) }
 
-func (d *digest) Size() int {
-	switch d.function {
-	case crypto.SHA512_224:
-		return Size224
-	case crypto.SHA512_256:
-		return Size256
-	case crypto.SHA384:
-		return Size384
-	default:
-		return Size
-	}
-}
+func (d *digest) Size() int { _ = "STUB: not implemented"; return 0 }
 
-func (d *digest) BlockSize() int { return BlockSize }
+func (d *digest) BlockSize() int { _ = "STUB: not implemented"; return 0 }
 
-func (d *digest) Write(p []byte) (nn int, err error) {
-	nn = len(p)
-	d.len += uint64(nn)
-	if d.nx > 0 {
-		n := copy(d.x[d.nx:], p)
-		d.nx += n
-		if d.nx == chunk {
-			block(d, d.x[:])
-			d.nx = 0
-		}
-		p = p[n:]
-	}
-	if len(p) >= chunk {
-		n := len(p) &^ (chunk - 1)
-		block(d, p[:n])
-		p = p[n:]
-	}
-	if len(p) > 0 {
-		d.nx = copy(d.x[:], p)
-	}
-	return
-}
+func (d *digest) Write(p []byte) (nn int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (d0 *digest) Sum(in []byte) []byte {
-	// Make a copy of d0 so that caller can keep writing and summing.
-	d := new(digest)
-	*d = *d0
-	hash := d.checkSum()
-	switch d.function {
-	case crypto.SHA384:
-		return append(in, hash[:Size384]...)
-	case crypto.SHA512_224:
-		return append(in, hash[:Size224]...)
-	case crypto.SHA512_256:
-		return append(in, hash[:Size256]...)
-	default:
-		return append(in, hash[:]...)
-	}
-}
+func (d0 *digest) Sum(in []byte) []byte { _ = "STUB: not implemented"; return nil }
 
-func (d *digest) checkSum() [Size]byte {
-	// Padding.  Add a 1 bit and 0 bits until 112 bytes mod 128.
-	len := d.len
-	var tmp [128]byte
-	tmp[0] = 0x80
-	if len%128 < 112 {
-		d.Write(tmp[0 : 112-len%128])
-	} else {
-		d.Write(tmp[0 : 128+112-len%128])
-	}
+func (d *digest) checkSum() [Size]byte { _ = "STUB: not implemented"; return [Size]byte{} }
 
-	// Length in bits.
-	len <<= 3
-	for i := uint(0); i < 16; i++ {
-		tmp[i] = byte(len >> (120 - 8*i))
-	}
-	d.Write(tmp[0:16])
+func Sum512(data []byte) [Size]byte { _ = "STUB: not implemented"; return [Size]byte{} }
 
-	if d.nx != 0 {
-		panic("d.nx != 0")
-	}
+func Sum384(data []byte) (sum384 [Size384]byte) { _ = "STUB: not implemented"; return [Size384]byte{} }
 
-	h := d.h[:]
-	if d.function == crypto.SHA384 {
-		h = d.h[:6]
-	}
-
-	var digest [Size]byte
-	for i, s := range h {
-		digest[i*8] = byte(s >> 56)
-		digest[i*8+1] = byte(s >> 48)
-		digest[i*8+2] = byte(s >> 40)
-		digest[i*8+3] = byte(s >> 32)
-		digest[i*8+4] = byte(s >> 24)
-		digest[i*8+5] = byte(s >> 16)
-		digest[i*8+6] = byte(s >> 8)
-		digest[i*8+7] = byte(s)
-	}
-
-	return digest
-}
-
-// Sum512 returns the SHA512 checksum of the data.
-func Sum512(data []byte) [Size]byte {
-	d := digest{function: crypto.SHA512}
-	d.Reset()
-	d.Write(data)
-	return d.checkSum()
-}
-
-// Sum384 returns the SHA384 checksum of the data.
-func Sum384(data []byte) (sum384 [Size384]byte) {
-	d := digest{function: crypto.SHA384}
-	d.Reset()
-	d.Write(data)
-	sum := d.checkSum()
-	copy(sum384[:], sum[:Size384])
-	return
-}
-
-// Sum512_224 returns the Sum512/224 checksum of the data.
 func Sum512_224(data []byte) (sum224 [Size224]byte) {
-	d := digest{function: crypto.SHA512_224}
-	d.Reset()
-	d.Write(data)
-	sum := d.checkSum()
-	copy(sum224[:], sum[:Size224])
-	return
+	_ = "STUB: not implemented"
+	return [Size224]byte{}
 }
 
-// Sum512_256 returns the Sum512/256 checksum of the data.
 func Sum512_256(data []byte) (sum256 [Size256]byte) {
-	d := digest{function: crypto.SHA512_256}
-	d.Reset()
-	d.Write(data)
-	sum := d.checkSum()
-	copy(sum256[:], sum[:Size256])
-	return
+	_ = "STUB: not implemented"
+	return [Size256]byte{}
 }

@@ -1,17 +1,5 @@
-// Copyright 2012 The Go Authors.  All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 //go:build ignore
 // +build ignore
-
-// This program generates md5block.go
-// Invoke as
-//
-//	go run gen.go [-full] -output md5block.go
-//
-// The -full flag causes the generated code to do a full
-// (16x) unrolling instead of a 4x unrolling.
 
 package main
 
@@ -20,7 +8,7 @@ import (
 	"flag"
 	"go/format"
 	"log"
-	"strings"
+	"os"
 	"text/template"
 )
 
@@ -65,22 +53,11 @@ var funcs = template.FuncMap{
 	"rotate":  rotate,
 }
 
-func dup(count int, x []int) []int {
-	var out []int
-	for i := 0; i < count; i++ {
-		out = append(out, x...)
-	}
-	return out
-}
+func dup(count int, x []int) []int { _ = "STUB: not implemented"; return nil }
 
-func relabel(s string) string {
-	return strings.NewReplacer("a", data.a, "b", data.b, "c", data.c, "d", data.d).Replace(s)
-}
+func relabel(s string) string { _ = "STUB: not implemented"; return "" }
 
-func rotate() string {
-	data.a, data.b, data.c, data.d = data.d, data.a, data.b, data.c
-	return "" // no output
-}
+func rotate() string { _ = "STUB: not implemented"; return "" }
 
 func init() {
 	flag.BoolVar(&data.Full, "full", false, "complete unrolling")
@@ -96,9 +73,8 @@ var data = Data{
 	Shift3: []int{4, 11, 16, 23},
 	Shift4: []int{6, 10, 15, 21},
 
-	// table[i] = int((1<<32) * abs(sin(i+1 radians))).
 	Table1: []uint32{
-		// round 1
+
 		0xd76aa478,
 		0xe8c7b756,
 		0x242070db,
@@ -117,7 +93,7 @@ var data = Data{
 		0x49b40821,
 	},
 	Table2: []uint32{
-		// round 2
+
 		0xf61e2562,
 		0xc040b340,
 		0x265e5a51,
@@ -136,7 +112,7 @@ var data = Data{
 		0x8d2a4c8a,
 	},
 	Table3: []uint32{
-		// round3
+
 		0xfffa3942,
 		0x8771f681,
 		0x6d9d6122,
@@ -155,7 +131,7 @@ var data = Data{
 		0xc4ac5665,
 	},
 	Table4: []uint32{
-		// round 4
+
 		0xf4292244,
 		0x432aff97,
 		0xab9423a7,
