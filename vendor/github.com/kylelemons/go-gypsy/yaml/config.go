@@ -172,8 +172,9 @@ func (f *File) Require(spec string) string {
 }
 
 // Child retrieves a child node from the specified node as follows:
-//   .mapkey   - Get the key 'mapkey' of the Node, which must be a Map
-//   [idx]     - Choose the index from the current Node, which must be a List
+//
+//	.mapkey   - Get the key 'mapkey' of the Node, which must be a Map
+//	[idx]     - Choose the index from the current Node, which must be a List
 //
 // The above selectors may be applied recursively, and each successive selector
 // applies to the result of the previous selector.  For convenience, a "." is

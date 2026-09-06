@@ -9,9 +9,10 @@ import (
 // error code as below.
 //
 // Example:
-//     if val, ok := err.(*mysql.Error); ok {
-//         fmt.Println(val.Code)
-//     }
+//
+//	if val, ok := err.(*mysql.Error); ok {
+//	    fmt.Println(val.Code)
+//	}
 type Error struct {
 	Code uint16
 	Msg  []byte

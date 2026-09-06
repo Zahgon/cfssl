@@ -1,19 +1,10 @@
-// Package serve implements the serve command for CFSSL's API.
 package serve
 
 import (
-	"crypto/tls"
 	"embed"
 	"errors"
-	"fmt"
 	"io/fs"
-	"net"
 	"net/http"
-	"net/url"
-	"os"
-	"regexp"
-	"strconv"
-	"strings"
 
 	"github.com/cloudflare/cfssl/api"
 	"github.com/cloudflare/cfssl/api/bundle"
@@ -29,22 +20,14 @@ import (
 	"github.com/cloudflare/cfssl/api/revoke"
 	"github.com/cloudflare/cfssl/api/scan"
 	"github.com/cloudflare/cfssl/api/signhandler"
-	"github.com/cloudflare/cfssl/bundler"
-	"github.com/cloudflare/cfssl/certdb/dbconf"
 	certsql "github.com/cloudflare/cfssl/certdb/sql"
 	"github.com/cloudflare/cfssl/cli"
-	ocspsign "github.com/cloudflare/cfssl/cli/ocspsign"
-	"github.com/cloudflare/cfssl/cli/sign"
-	"github.com/cloudflare/cfssl/helpers"
-	"github.com/cloudflare/cfssl/log"
 	"github.com/cloudflare/cfssl/ocsp"
 	"github.com/cloudflare/cfssl/signer"
-	"github.com/cloudflare/cfssl/ubiquity"
 
 	"github.com/jmoiron/sqlx"
 )
 
-// Usage text of 'cfssl serve'
 var serverUsageText = `cfssl serve -- set up a HTTP server handles CF SSL requests
 
 Usage of serve:
@@ -59,7 +42,6 @@ Usage of serve:
 Flags:
 `
 
-// Flags used by 'cfssl serve'
 var serverFlags = []string{"address", "port", "min-tls-version", "ca", "ca-key", "ca-bundle", "int-bundle", "int-dir",
 	"metadata", "remote", "config", "responder", "responder-key", "tls-key", "tls-cert", "mutual-tls-ca",
 	"mutual-tls-cn", "tls-remote-ca", "mutual-tls-client-cert", "mutual-tls-client-key", "db-config", "disable"}
@@ -71,16 +53,9 @@ var (
 	db         *sqlx.DB
 )
 
-// V1APIPrefix is the prefix of all CFSSL V1 API Endpoints.
 var V1APIPrefix = "/api/v1/cfssl/"
 
-// v1APIPath prepends the V1 API prefix to endpoints not beginning with "/"
-func v1APIPath(path string) string {
-	if !strings.HasPrefix(path, "/") {
-		path = V1APIPrefix + path
-	}
-	return (&url.URL{Path: path}).String()
-}
+func v1APIPath(path string) string { _ = "STUB: not implemented"; return "" }
 
 //go:embed static
 var staticContent embed.FS
@@ -97,13 +72,8 @@ type staticFS struct {
 }
 
 func (s *staticFS) Open(name string) (fs.File, error) {
-	if strings.HasPrefix(name, V1APIPrefix) {
-		return nil, os.ErrNotExist
-	}
-	if location, ok := s.redirections[name]; ok {
-		return s.fs.Open(location)
-	}
-	return s.fs.Open(name)
+	_ = "STUB: not implemented"
+	return *new(fs.File), nil
 }
 
 var errBadSigner = errors.New("signer not initialized")
@@ -246,142 +216,25 @@ var endpoints = map[string]func() (http.Handler, error){
 	},
 }
 
-// registerHandlers instantiates various handlers and associate them to corresponding endpoints.
-func registerHandlers() {
-	disabled := make(map[string]bool)
-	if conf.Disable != "" {
-		for _, endpoint := range strings.Split(conf.Disable, ",") {
-			disabled[endpoint] = true
-		}
-	}
+func registerHandlers() { _ = "STUB: not implemented"; return }
 
-	for path, getHandler := range endpoints {
-		log.Debugf("getHandler for %s", path)
+func serverMain(args []string, c cli.Config) error { _ = "STUB: not implemented"; return nil }
 
-		if _, ok := disabled[path]; ok {
-			log.Infof("endpoint '%s' is explicitly disabled", path)
-		} else if handler, err := getHandler(); err != nil {
-			log.Warningf("endpoint '%s' is disabled: %v", path, err)
-		} else {
-			if path, handler, err = wrapHandler(path, handler, err); err != nil {
-				log.Warningf("endpoint '%s' is disabled by wrapper: %v", path, err)
-			} else {
-				log.Infof("endpoint '%s' is enabled", path)
-				http.Handle(path, handler)
-			}
-		}
-	}
-	log.Info("Handler set up complete.")
-}
-
-// serverMain is the command line entry point to the API server. It sets up a
-// new HTTP server to handle sign, bundle, and validate requests.
-func serverMain(args []string, c cli.Config) error {
-	conf = c
-	// serve doesn't support arguments.
-	if len(args) > 0 {
-		return errors.New("argument is provided but not defined; please refer to the usage by flag -h")
-	}
-
-	bundler.IntermediateStash = conf.IntDir
-	var err error
-
-	if err = ubiquity.LoadPlatforms(conf.Metadata); err != nil {
-		return err
-	}
-
-	if c.DBConfigFile != "" {
-		db, err = dbconf.DBFromConfig(c.DBConfigFile)
-		if err != nil {
-			return err
-		}
-	}
-
-	log.Info("Initializing signer")
-
-	if s, err = sign.SignerFromConfigAndDB(c, db); err != nil {
-		log.Warningf("couldn't initialize signer: %v", err)
-	}
-
-	if ocspSigner, err = ocspsign.SignerFromConfig(c); err != nil {
-		log.Warningf("couldn't initialize ocsp signer: %v", err)
-	}
-
-	registerHandlers()
-
-	addr := net.JoinHostPort(conf.Address, strconv.Itoa(conf.Port))
-
-	tlscfg := tls.Config{}
-	if conf.MinTLSVersion != "" {
-		tlscfg.MinVersion = helpers.StringTLSVersion(conf.MinTLSVersion)
-	}
-
-	if conf.TLSCertFile == "" || conf.TLSKeyFile == "" {
-		log.Info("Now listening on ", addr)
-		return http.ListenAndServe(addr, nil)
-	}
-	if conf.MutualTLSCAFile != "" {
-		clientPool, err := helpers.LoadPEMCertPool(conf.MutualTLSCAFile)
-		if err != nil {
-			return fmt.Errorf("failed to load mutual TLS CA file: %s", err)
-		}
-
-		tlscfg.ClientAuth = tls.RequireAndVerifyClientCert
-		tlscfg.ClientCAs = clientPool
-
-		server := http.Server{
-			Addr:      addr,
-			TLSConfig: &tlscfg,
-		}
-
-		if conf.MutualTLSCNRegex != "" {
-			log.Debugf(`Requiring CN matches regex "%s" for client connections`, conf.MutualTLSCNRegex)
-			re, err := regexp.Compile(conf.MutualTLSCNRegex)
-			if err != nil {
-				return fmt.Errorf("malformed CN regex: %s", err)
-			}
-			server.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r != nil && r.TLS != nil && len(r.TLS.PeerCertificates) > 0 {
-					if re.MatchString(r.TLS.PeerCertificates[0].Subject.CommonName) {
-						http.DefaultServeMux.ServeHTTP(w, r)
-						return
-					}
-					log.Warningf(`Rejected client cert CN "%s" does not match regex %s`,
-						r.TLS.PeerCertificates[0].Subject.CommonName, conf.MutualTLSCNRegex)
-				}
-				http.Error(w, "Invalid CN", http.StatusForbidden)
-			})
-		}
-		log.Info("Now listening with mutual TLS on https://", addr)
-		return server.ListenAndServeTLS(conf.TLSCertFile, conf.TLSKeyFile)
-	}
-	log.Info("Now listening on https://", addr)
-	server := http.Server{
-		Addr:      addr,
-		TLSConfig: &tlscfg,
-	}
-	return server.ListenAndServeTLS(conf.TLSCertFile, conf.TLSKeyFile)
-
-}
-
-// Command assembles the definition of Command 'serve'
 var Command = &cli.Command{UsageText: serverUsageText, Flags: serverFlags, Main: serverMain}
 
 var wrapHandler = defaultWrapHandler
 
-// The default wrapper simply returns the normal handler and prefixes the path appropriately
 func defaultWrapHandler(path string, handler http.Handler, err error) (string, http.Handler, error) {
-	return v1APIPath(path), handler, err
+	_ = "STUB: not implemented"
+	return "", *new(http.Handler), nil
 }
 
-// SetWrapHandler sets the wrap handler which is called for all endpoints
-// A custom wrap handler may be provided in order to add arbitrary server-side pre or post processing
-// of server-side HTTP handling of requests.
 func SetWrapHandler(wh func(path string, handler http.Handler, err error) (string, http.Handler, error)) {
-	wrapHandler = wh
+	_ = "STUB: not implemented"
+	return
 }
 
-// SetEndpoint can be used to add additional routes/endpoints to the HTTP server, or to override an existing route/endpoint
 func SetEndpoint(path string, getHandler func() (http.Handler, error)) {
-	endpoints[path] = getHandler
+	_ = "STUB: not implemented"
+	return
 }

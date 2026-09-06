@@ -10,7 +10,6 @@ import (
 	"github.com/cloudflare/cfssl/config"
 )
 
-// main defines the bundle usage and registers all defined commands and flags.
 func main() {
 
 	var bundleFlagSet = flag.NewFlagSet("bundle", flag.ExitOnError)
@@ -51,30 +50,6 @@ func main() {
 	}
 }
 
-// printDefaultValue is a helper function to print out a user friendly
-// usage message of a flag. It's useful since we want to write customized
-// usage message on selected subsets of the global flag set. It is
-// borrowed from standard library source code. Since flag value type is
-// not exported, default string flag values are printed without
-// quotes. The only exception is the empty string, which is printed as "".
-func printDefaultValue(f *flag.Flag) {
-	format := "  -%s=%s: %s\n"
-	if f.DefValue == "" {
-		format = "  -%s=%q: %s\n"
-	}
-	fmt.Fprintf(os.Stderr, format, f.Name, f.DefValue, f.Usage)
-}
+func printDefaultValue(f *flag.Flag) { _ = "STUB: not implemented"; return }
 
-// registerFlags defines all cfssl command flags and associates their values with variables.
-func registerFlags(c *cli.Config, f *flag.FlagSet) {
-	f.StringVar(&c.CertFile, "cert", "", "Client certificate that contains the public key")
-	f.StringVar(&c.KeyFile, "key", "", "private key for the certificate")
-	f.StringVar(&c.CABundleFile, "ca-bundle", "", "path to root certificate store")
-	f.StringVar(&c.IntBundleFile, "int-bundle", "", "path to intermediate certificate store")
-	f.StringVar(&c.Flavor, "flavor", "ubiquitous", "Bundle Flavor: ubiquitous, optimal and force.")
-	f.StringVar(&c.IntDir, "int-dir", "", "specify intermediates directory")
-	f.StringVar(&c.Metadata, "metadata", "", "Metadata file for root certificate presence. The content of the file is a json dictionary (k,v): each key k is SHA-1 digest of a root certificate while value v is a list of key store filenames.")
-	f.StringVar(&c.Domain, "domain", "", "remote server domain name")
-	f.StringVar(&c.IP, "ip", "", "remote server ip")
-	f.StringVar(&c.Password, "password", "0", "Password for accessing PKCS #12 data passed to bundler")
-}
+func registerFlags(c *cli.Config, f *flag.FlagSet) { _ = "STUB: not implemented"; return }

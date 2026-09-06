@@ -9,12 +9,11 @@ import (
 	"github.com/cloudflare/cfssl/cli/certinfo"
 	"github.com/cloudflare/cfssl/config"
 
-	_ "github.com/go-sql-driver/mysql" // import to support MySQL
-	_ "github.com/lib/pq"              // import to support Postgres
-	_ "github.com/mattn/go-sqlite3"    // import to support SQLite3
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-// main defines the newkey usage and registers all defined commands and flags.
 func main() {
 
 	var certinfoFlagSet = flag.NewFlagSet("certinfo", flag.ExitOnError)
@@ -56,25 +55,6 @@ func main() {
 	}
 }
 
-// printDefaultValue is a helper function to print out a user friendly
-// usage message of a flag. It's useful since we want to write customized
-// usage message on selected subsets of the global flag set. It is
-// borrowed from standard library source code. Since flag value type is
-// not exported, default string flag values are printed without
-// quotes. The only exception is the empty string, which is printed as "".
-func printDefaultValue(f *flag.Flag) {
-	format := "  -%s=%s: %s\n"
-	if f.DefValue == "" {
-		format = "  -%s=%q: %s\n"
-	}
-	fmt.Fprintf(os.Stderr, format, f.Name, f.DefValue, f.Usage)
-}
+func printDefaultValue(f *flag.Flag) { _ = "STUB: not implemented"; return }
 
-// registerFlags defines all cfssl command flags and associates their values with variables.
-func registerFlags(c *cli.Config, f *flag.FlagSet) {
-	f.StringVar(&c.CertFile, "cert", "", "Client certificate that contains the public key")
-	f.StringVar(&c.Domain, "domain", "", "remote server domain name")
-	f.StringVar(&c.Serial, "serial", "", "certificate serial number")
-	f.StringVar(&c.AKI, "aki", "", "certificate issuer (authority) key identifier")
-	f.StringVar(&c.DBConfigFile, "db-config", "", "certificate db configuration file")
-}
+func registerFlags(c *cli.Config, f *flag.FlagSet) { _ = "STUB: not implemented"; return }

@@ -1,7 +1,3 @@
-// Copyright 2011 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 //go:build darwin && cgo && !arm && !arm64 && !ios
 // +build darwin,cgo,!arm,!arm64,!ios
 
@@ -64,21 +60,6 @@ int FetchPEMRootsCFSSLTransport(CFDataRef *pemRoots) {
 import "C"
 import (
 	"crypto/x509"
-	"unsafe"
 )
 
-func initSystemRoots() []*x509.Certificate {
-	var roots []*x509.Certificate
-
-	var data C.CFDataRef
-	setNilCFRef(&data)
-	err := C.FetchPEMRootsCFSSLTransport(&data)
-	if err == -1 {
-		return nil
-	}
-
-	defer C.CFRelease(C.CFTypeRef(data))
-	buf := C.GoBytes(unsafe.Pointer(C.CFDataGetBytePtr(data)), C.int(C.CFDataGetLength(data)))
-	roots, _ = appendPEM(roots, buf)
-	return roots
-}
+func initSystemRoots() []*x509.Certificate { _ = "STUB: not implemented"; return nil }

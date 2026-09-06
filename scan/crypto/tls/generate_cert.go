@@ -1,12 +1,5 @@
-// Copyright 2009 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 //go:build ignore
 // +build ignore
-
-// Generate a self-signed X.509 certificate for a TLS server. Outputs to
-// 'cert.pem' and 'key.pem' and will overwrite existing files.
 
 package main
 
@@ -27,8 +20,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/cloudflare/cfssl/helpers/derhelpers"
 )
 
 var (
@@ -40,41 +31,9 @@ var (
 	ecdsaCurve = flag.String("ecdsa-curve", "", "ECDSA curve to use to generate a key. Valid values are P224, P256, P384, P521")
 )
 
-func publicKey(priv interface{}) interface{} {
-	switch k := priv.(type) {
-	case *rsa.PrivateKey:
-		return &k.PublicKey
-	case *ed25519.PrivateKey:
-		return &k.Public()
-	case *ecdsa.PrivateKey:
-		return &k.PublicKey
-	default:
-		return nil
-	}
-}
+func publicKey(priv interface{}) interface{} { _ = "STUB: not implemented"; return nil }
 
-func pemBlockForKey(priv interface{}) *pem.Block {
-	switch k := priv.(type) {
-	case *rsa.PrivateKey:
-		return &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(k)}
-	case *ed25519.PrivateKey:
-		b, err := derhelpers.MarshalEd25519PrivateKey(priv)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to marshal ED25519 private key: %v", err)
-			os.Exit(2)
-		}
-		return &pem.Block{Type: "Ed25519 PRIVATE KEY", Bytes: b}
-	case *ecdsa.PrivateKey:
-		b, err := x509.MarshalECPrivateKey(k)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to marshal ECDSA private key: %v", err)
-			os.Exit(2)
-		}
-		return &pem.Block{Type: "EC PRIVATE KEY", Bytes: b}
-	default:
-		return nil
-	}
-}
+func pemBlockForKey(priv interface{}) *pem.Block { _ = "STUB: not implemented"; return nil }
 
 func main() {
 	flag.Parse()
